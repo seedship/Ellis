@@ -24,10 +24,10 @@ VAR
 	io_op		: STRING[16]	-- operatio or used method
 	p		: STRING[254]	-- position string {p=x,y,z,w,p,r}
 
+%INCLUDE strlib/strlib.klh
+
 ROUTINE w_error(fd: FILE; reason: STRING)				  FROM move_cgi
-ROUTINE	str2pose(str: STRING, p: XYZWPREXT)				  FROM move_cgi
 ROUTINE check_param 	      	 				: INTEGER FROM move_cgi
-ROUTINE split_str(str:STRING,del:STRING,res:ARRAY[*] OF STRING)   	  FROM move_cgi
 
 BEGIN
 	OPEN FILE fd_(RESPONCE_OMODE,RESPONCE_FILE)
@@ -106,46 +106,3 @@ ROUTINE w_error
 BEGIN
 	WRITE fd('{"result":"error","reason":"', reason, '"}',CR)
 END w_error
-
-ROUTINE split_str
-VAR
-	tmp: STRING[254]
-	i : INTEGER
-	j : INTEGER
-BEGIN
-	j = 1
-	tmp = ''
-
-	FOR i = 1 TO ARRAY_LEN(res) DO
-	    res[i] = ''
-	ENDFOR
-
-	FOR i = 1 TO STR_LEN(str) DO
-	    IF (i = STR_LEN(str)) AND (SUB_STR(str,i,1) <> del) THEN
-	       tmp = tmp + SUB_STR(str,i,1)
-	    ENDIF
-
-	    IF (SUB_STR(str,i,1) = del) OR (i=STR_LEN(str)) THEN
-	       res[j] = tmp
-	       j = j + 1
-	       tmp = ''
-	    ELSE
-		tmp = tmp + SUB_STR(str,i,1)
-	    ENDIF
-	ENDFOR
-END split_str
-
-ROUTINE	str2pose
-VAR
-	position	: ARRAY[6] OF STRING
-BEGIN
-	split_str(str, ',', position)
-
-	p.x = CNV_STR_REAL(position[1])
-	p.y = CNV_STR_REAL(position[2])
-	p.z = CNV_STR_REAL(position[3])
-	p.w = CNV_STR_REAL(position[4])
-	p.p = CNV_STR_REAL(position[5])
-	p.r = CNV_STR_REAL(position[6])
-	
-END str2pose
