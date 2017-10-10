@@ -1,0 +1,21 @@
+PROGRAM move_cgi
+
+%ALPHABETIZE
+%COMMENT= 'move using cgi interface'
+%NOLOCKGROUP
+
+CONST
+	RESPONCE_FILE	= 'TD:\MOVE_CGI.HTM'
+	RESPONCE_OMODE	= 'RW'
+
+	OP_READ 	= 'read'
+	OP_WRITE	= 'write'
+
+VAR
+	fd_	: FILE
+	stat_	: INTEGER
+
+	port_type
+
+END move_cgi
+

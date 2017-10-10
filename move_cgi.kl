@@ -1,0 +1,151 @@
+-- http://<robot_ip>/KAREL/move_cgi?io_op=write&p={x,y,z,w,p,r}
+-- http://<robot_ip>/KAREL/move_cgi?io_op=read => "pose":["x","y","z","w","p","r"]
+
+PROGRAM move_cgi
+
+%ALPHABETIZE
+%COMMENT= 'move using cgi interface'
+%NOLOCKGROUP
+
+CONST
+	RESPONCE_FILE	= 'TD:\MOVE_CGI.HTM'
+	RESPONCE_OMODE	= 'RW'
+
+	OP_READ 	= 'read'
+	OP_WRITE	= 'write'
+
+VAR
+	fd_		: FILE
+	stat_		: INTEGER
+
+	pose		: XYZWPREXT
+
+	-- GET PARAMETERS
+	io_op		: STRING[16]	-- operatio or used method
+	p		: STRING[254]	-- position string {p=x,y,z,w,p,r}
+
+ROUTINE w_error(fd: FILE; reason: STRING)				  FROM move_cgi
+ROUTINE	str2pose(str: STRING, p: XYZWPREXT)				  FROM move_cgi
+ROUTINE check_param 	      	 				: INTEGER FROM move_cgi
+ROUTINE split_str(str:STRING,del:STRING,res:ARRAY[*] OF STRING)   	  FROM move_cgi
+
+BEGIN
+	OPEN FILE fd_(RESPONCE_OMODE,RESPONCE_FILE)
+
+	stat_ = IO_STATUS(fd_)
+	IF (stat_ <> 0) THEN
+	   p = ''
+	   CLOSE FILE fd_
+	ENDIF
+
+	IF (check_param <> 0) THEN
+	   p = ''
+	   CLOSE FILE fd_
+	ENDIF
+
+	-- init pose with current possition
+	pose = CURPOS(0,0)
+
+	   -- read
+	IF (io_op = OP_READ) THEN
+	   -- read request
+	   -- write return to the http server
+	   WRITE fd_('{',
+		     '"result":"success",',
+		     '"op":"read",',
+		     '"position":[',
+		     '"',CNV_REAL_STR(pose.x),'",',
+		     '"',CNV_REAL_STR(pose.y),'",',
+		     '"',CNV_REAL_STR(pose.z),'",',
+		     '"',CNV_REAL_STR(pose.w),'",',
+		     '"',CNV_REAL_STR(pose.p),'",',
+		     '"',CNV_REAL_STR(pose.r),'",',		     
+		     ']')
+	   
+	ELSE
+	
+		--write
+		IF (io_op = OP_WRITE) THEN
+		   --check p string
+		   IF (UNINIT(p)) THEN
+		      w_error(fd_, 'missing parameter: p')
+		      p = ''
+	   	      CLOSE FILE fd_
+		   ENDIF
+
+		   str2pose(p,pose)
+
+		   --move_to
+		   $MOTYPE = JOINT
+		   MOVE TO pose
+		ELSE
+		--anything else corse error
+		   w_error(fd_, 'unsupported method:' + io_op)
+		   p = ''
+	   	   CLOSE FILE fd_
+		ENDIF
+	   
+	ENDIF
+
+END move_cgi
+
+ROUTINE check_param
+BEGIN
+	IF ((UNINT(io_op) )) THEN ip_op = '' ; ENDIF
+	-- p is allowed to be empty
+	IF ((UNINT(p) ))     THEN p 	= '' ; ENDIF
+
+	IF (io_op = '') THEN
+	   RETURN (-1)
+	ENDIF
+
+	RETURN(1)
+END check_param
+
+ROUTINE w_error
+BEGIN
+	WRITE fd('{"result":"error","reason":"', reason, '"}',CR)
+END w_error
+
+ROUTINE split_str
+VAR
+	tmp: STRING[254]
+	i : INTEGER
+	j : INTEGER
+BEGIN
+	j = 1
+	tmp = ''
+
+	FOR i = 1 TO ARRAY_LEN(res) DO
+	    res[i] = ''
+	ENDFOR
+
+	FOR i = 1 TO STR_LEN(str) DO
+	    IF (i = STR_LEN(str)) AND (SUB_STR(str,i,1) <> del) THEN
+	       tmp = tmp + SUB_STR(str,i,1)
+	    ENDIF
+
+	    IF (SUB_STR(str,i,1) = del) OR (i=STR_LEN(str)) THEN
+	       res[j] = tmp
+	       j = j + 1
+	       tmp = ''
+	    ELSE
+		tmp = tmp + SUB_STR(str,i,1)
+	    ENDIF
+	ENDFOR
+END split_str
+
+ROUTINE	str2pose
+VAR
+	position	: ARRAY[6] OF STRING
+BEGIN
+	split_str(str, ',', position)
+
+	p.x = CNV_STR_REAL(position[1])
+	p.y = CNV_STR_REAL(position[2])
+	p.z = CNV_STR_REAL(position[3])
+	p.w = CNV_STR_REAL(position[4])
+	p.p = CNV_STR_REAL(position[5])
+	p.r = CNV_STR_REAL(position[6])
+	
+END str2pose
