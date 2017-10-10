@@ -19,9 +19,10 @@ VAR
 	stat_		: INTEGER
 
 	pose		: XYZWPREXT
+	tmppose		: XYZWPR
 
 	-- GET PARAMETERS
-	io_op		: STRING[16]	-- operatio or used method
+	io_op		: STRING[16]	-- operatior or used method
 	p		: STRING[254]	-- position string {p=x,y,z,w,p,r}
 
 %INCLUDE strlib/strlib.klh
@@ -54,12 +55,12 @@ BEGIN
 		     '"result":"success",',
 		     '"op":"read",',
 		     '"position":[',
-		     '"',CNV_REAL_STR(pose.x),'",',
-		     '"',CNV_REAL_STR(pose.y),'",',
-		     '"',CNV_REAL_STR(pose.z),'",',
-		     '"',CNV_REAL_STR(pose.w),'",',
-		     '"',CNV_REAL_STR(pose.p),'",',
-		     '"',CNV_REAL_STR(pose.r),'",',		     
+		     '"',real2str(pose.x),'",',
+		     '"',real2str(pose.y),'",',
+		     '"',real2str(pose.z),'",',
+		     '"',real2str(pose.w),'",',
+		     '"',real2str(pose.p),'",',
+		     '"',real2str(pose.r),'",',		     
 		     ']')
 	   
 	ELSE
@@ -73,8 +74,15 @@ BEGIN
 	   	      CLOSE FILE fd_
 		   ENDIF
 
-		   str2pose(p,pose)
+		   str2pose(p,',',tmppose)
 
+		   pose.x=tmppose.x
+		   pose.y=tmppose.y
+		   pose.z=tmppose.z
+		   pose.w=tmppose.w
+		   pose.p=tmppose.p
+		   pose.r=tmppose.r
+		   
 		   --move_to
 		   $MOTYPE = JOINT
 		   MOVE TO pose
@@ -91,9 +99,9 @@ END move_cgi
 
 ROUTINE check_param
 BEGIN
-	IF ((UNINT(io_op) )) THEN ip_op = '' ; ENDIF
+	IF ((UNINIT(io_op) )) THEN io_op = '' ; ENDIF
 	-- p is allowed to be empty
-	IF ((UNINT(p) ))     THEN p 	= '' ; ENDIF
+	IF ((UNINIT(p) ))     THEN p 	= '' ; ENDIF
 
 	IF (io_op = '') THEN
 	   RETURN (-1)
