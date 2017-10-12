@@ -1,8 +1,6 @@
 # MOVE CGI - A SMALL interfaceing tool with the robot controller 
 
-http://robot_ip/KAREL/move_cgi?io_op=write&p=x,y,z,w,p,r
-
-http://robot_ip/KAREL/move_cgi?io_op=read                               
+                             
 
 
 ## Installation
@@ -15,3 +13,8 @@ Set UNLOCK to HTTP authentication of KAREL:
 2. Set the cursor on `HTTP`
 3. Push `F3[DETAIL]`
 4. Set the cursor on `A` left side of KAREL. Select `F3[UNLOCK]`
+
+## Example usage
+http://robot_ip/KAREL/move_cgi?io_op=write&p=x,y,z,w,p,r
+
+http://robot_ip/KAREL/move_cgi?io_op=read  
