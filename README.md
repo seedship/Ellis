@@ -6,9 +6,8 @@ http://robot_ip/KAREL/move_cgi?io_op=read
 
 
 ## Installation
-1. Build the `*.kl` files in the `karel` folder with Roboguide and copy them to the robot `MD:` folder
-2. Copy the `*.htm` file from the `examples` folder to the robot `MD:` folder
-3. Copy the `webmotion.tp` file from the `tpe` folder to the robot `MD:` folder
+Build the `*.kl` files in the `karel` folder with Roboguide and copy them to the robot `MD:` folder
+
 
 ## Configuration
 Set UNLOCK to HTTP authentication of KAREL: 
