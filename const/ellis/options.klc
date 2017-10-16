@@ -1,0 +1,13 @@
+OP_AVAILABLE = 1	-- is the requested controller reachable
+OP_CURR_POS  = 2	-- get the current position
+OP_READ_REG  = 3	-- read a specific register
+OP_WRITE_REG = 4	-- write into a specific register
+OP_RUN_PROG  = 5	-- run a program
+OP_STOP_PROG = 6	-- stop a runing program
+OP_TPE_POS   = 7	-- change a position in an tpe program
+OP_MONITOR   = 8	-- monitor the robot information
+OP_PROGRAM   = 9	-- list all available programms
+OP_RESET     = 10	-- reset the controller
+OP_LIMITS    = 11	-- set 6D limit for the robot
+OP_MOVE	     = 12	-- Move the robot.
+OP_ERR	     = 13	-- GET ERROR Information

@@ -1,0 +1,7 @@
+R_OK	      = 200	-- OK the query did proceed
+R_NO_CONTENT  = 204	-- The Query is proceed, but the answer does not contain valid data
+R_BAD_REQUEST = 400	-- The Query has the wrong format 
+R_NOT_FOUND   = 404     -- The queried resource is not available or can not be found
+R_NOT_IMPL    = 501	-- The requested function is not implemented
+R_SERVICE_UNA = 503	-- The requested service in unreachable
+R_NOT_EXTENDED= 510	-- The querry does not contain all necessary infromation

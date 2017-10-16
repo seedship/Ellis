@@ -1,0 +1,40 @@
+-- the answer has always the form
+-- "{"id":"$ROBOT_ID", "version":"$VERSION", "time:":$FAST_CLOCK, "name":"$HOSTNAME", "return":ellis_return_code, "result":{...}}"
+
+PROGRAM ellis_answer
+
+CONST
+	%INCLUDE	ellis/options.klc
+	%INCLUDE	ellis/return.klc
+
+%INCLUDE strlib/strlib.klh	   -- strip function
+%INCLUDE log/log.klh  	   	   -- logging messages
+%INCLUDE timelib/time.klh   	   -- time information
+%INCLUDE ellis/ellis_answers.klh   -- logging messages
+
+BEGIN
+END ellis_answer
+
+ROUTINE ellis_header
+VAR
+	STATUS	:INTEGER
+BEGIN
+	STATUS = IO_STATUS(fd)
+	IF (STATUS <> 0) THEN
+	   ll_error('ellis_answer failed=', STATUS)
+	ENDIF
+
+	WRITE fd('{"id":"', 
+	      	 $ROBOT_ID , 
+	         '" , "version":"',
+		 $VERSION , 
+		 '" , "time":"',
+		 s_now ,
+		 '" , "name":"',
+		 $HOSTNAME ,
+		 '" , "return":',
+		 err_code ,
+		 ' , "data":{',
+		 strip(data) ,  
+		 '}"}', CR)
+END ellis_header
