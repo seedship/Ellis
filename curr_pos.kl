@@ -1,0 +1,102 @@
+-- http://<robot_ip>/KAREL/move_cgi?io_op=write&p={x,y,z,w,p,r}
+-- http://<robot_ip>/KAREL/move_cgi?io_op=read => "pose":["x","y","z","w","p","r"]
+
+PROGRAM curr_pos
+
+%ALPHABETIZE
+%COMMENT= 'current_position'
+%NOLOCKGROUP
+
+CONST
+	RPC_FILE	= 'TD:\RESPONSE.HTM'
+	RPC_OMODE	= 'RW'
+
+
+VAR
+	fd_				: FILE
+	stat_			: INTEGER
+
+	curr_pose		: XYZWPREXT
+
+ROUTINE real2str(r : REAL)                		: STRING FROM curr_pos
+ROUTINE lstrip(s : STRING)                		: STRING FROM curr_pos
+
+BEGIN
+	OPEN FILE fd_(RPC_OMODE,RPC_FILE)
+
+	stat_ = IO_STATUS(fd_)
+	IF (stat_ <> 0) THEN
+	   CLOSE FILE fd_
+	ENDIF
+
+	-- init pose with current possition
+	curr_pose = CURPOS(0,0)
+
+   -- read request
+   -- write return to the http server
+   WRITE fd_('{',
+	     '"result":"success",',
+	     '"cmd":"current_position",',
+	     '"position":[',
+	     real2str(curr_pose.x),',',
+	     real2str(curr_pose.y),',',
+	     real2str(curr_pose.z),',',
+	     real2str(curr_pose.w),',',
+	     real2str(curr_pose.p),',',
+	     real2str(curr_pose.r),		     
+	     ']}')
+
+END curr_pos
+
+ROUTINE real2str
+  VAR
+    s : STRING[16]
+    i : INTEGER
+  BEGIN
+    IF UNINIT(r) THEN
+      RETURN('null')
+    ENDIF
+
+    CNV_REAL_STR(r, 0, 3, s)
+    s = lstrip(s)
+
+    -- watchout for negative number
+    IF SUB_STR(s,1,1) = '-' THEN
+      -- see if next char is a point .
+      IF SUB_STR(s,2,1) = '.' THEN
+        s = '-0.' + SUB_STR(s,3,STR_LEN(s))
+      ENDIF
+    ENDIF
+
+    -- add leading zero
+    IF SUB_STR(s,1,1) = '.' THEN
+      s = '0' + s
+    ENDIF
+
+    -- get rid of trailing zeroes
+    FOR i = STR_LEN(s) DOWNTO 1 DO
+      IF SUB_STR(s,i,1) <> '0' THEN
+        -- see if prev char is a . so we leave 1 trailing zero
+        IF SUB_STR(s,i,1) = '.' THEN
+          RETURN(SUB_STR(s,1,i+1))
+        ELSE
+          RETURN(SUB_STR(s,1,i))
+        ENDIF
+      ENDIF
+    ENDFOR
+
+    RETURN(s)
+  END real2str
+
+ROUTINE lstrip
+  VAR
+    i : INTEGER
+  BEGIN
+    FOR i = 1 TO STR_LEN(s) DO
+      IF SUB_STR(s,i,1) <> ' ' THEN
+        RETURN(SUB_STR(s,i,STR_LEN(s)))
+      ENDIF
+    ENDFOR
+
+    RETURN(s)
+  END lstrip

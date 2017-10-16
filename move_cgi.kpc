@@ -1,0 +1,17 @@
+name: "move_cgi"
+discription: "using the browser interface to interact with the robot controller"
+version: "0.1.0"
+url: "http://10.18.67.184:10080/tool/karel/move_cgi"
+source: {url:"ssh://10.18.67.184:10022/tool/karel/move_cgi.git", type:"git", version:"master"}
+requirements: [{name: "strlib", version: "0.1.2"}]
+conflicts: [{name: "", version: [""]}]
+author:[{name:"anton feldmann",email: "<anton.feldmann@gmail.com>"}]
+prefix: "/usr/local"
+srcdir: ["src/karel"]
+typedir: ["include/karel/type"]
+constdir: ["include/karel/const"]
+includedir: ["include/karel"]
+lib: ["move_cgi.kl"]
+types: [""]
+consts: [""]
+includes: [""]
