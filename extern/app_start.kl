@@ -6,27 +6,43 @@ PROGRAM appstart
 
 VAR
 
+	--debug_logPs: FILE
+	response :FILE
+
 	STATUS: INTEGER
-	fd_ :FILE
-	
+
+	write_log: INTEGER
+	--ps_count :INTEGER	
 	prog_index: INTEGER
 	str_task: STRING[127]
 
 ROUTINE is_tsk_done (task_name:STRING): BOOLEAN FROM appstart
-ROUTINE w_result (fd :FILE; task_ :STRING) FROM appstart
 ROUTINE moveto( s_task :STRING ) FROM appstart
 
 BEGIN	
 	
-	IF UNINIT( str_task ) THEN str_task = '###@@@###'; ENDIF
+	--ps_count = 1  -- reset
 	
-	OPEN FILE fd_ ('RW', 'RD:RESPONSE.HTM')
+	IF UNINIT( str_task ) THEN str_task = '###@@@###'; ENDIF
 		
 	moveto(str_task)
-		
-	w_result(fd_,str_task)
 
-	CLOSE FILE fd_	
+
+--	write_log = 1 
+		
+--	CLEAR_SEMA (write_log) -- makes sure semaphore is zero before using it.
+
+	--OPEN FILE debug_logPs('RW', 'CONS:')
+	OPEN FILE response ('RW', 'RD:RESPONSE.HTM')	
+
+	WRITE response ( '{"result":"success", "program":"', str_task ,'"}') 
+	WRITE ( '{"result":"success",',CR,' "program":"', str_task ,'"}', CR)
+  	--WRITE debug_logPs ('PS#1 starting #', ps_count, CR)
+
+	CLOSE FILE response
+	--CLOSE FILE debug_logPs
+	
+--	POST_SEMA (write_log) -- makes motion_ctrl available immediately
 
 END appstart
 
@@ -38,34 +54,30 @@ BEGIN
 	motion_ctrl = 1 -- Semaphore to allow motion control
 		
 	CLEAR_SEMA (motion_ctrl) -- makes sure semaphore is zero before using it.
-	POST_SEMA (motion_ctrl) -- makes motion_ctrl available immediately
 	
-	WRITE ('Start Task: ', s_task, CR)	
-		
 	RUN_TASK( s_task, 1, FALSE, FALSE, 1 OR 2 OR 4, STATUS )
 	
-	FORCE_SPMENU ( TP_PANEL, SPI_TPUSER, 1) -- Force the Teach Pendant
+	--FORCE_SPMENU ( TP_PANEL, SPI_TPUSER, 1) -- Force the Teach Pendant
 											-- user screen to be seen
 								
 	REPEAT
 		tsk_done = is_tsk_done ( s_task )
-		WRITE ('wait for task to finish', tsk_done, CR)
 		DELAY (2000)
 	UNTIL ( tsk_done )
-
-	WRITE ('END Task: ', str_task, CR)	
+	
+	POST_SEMA (motion_ctrl) -- makes motion_ctrl available immediately
 END moveto
 
-ROUTINE w_result
-VAR
-	write_lock :INTEGER
-BEGIN	
-	write_lock = 1
-	CLEAR_SEMA (write_lock) -- makes sure semaphore is zero before using it.
-	POST_SEMA (write_lock) -- makes motion_ctrl available immediately
-		
-	WRITE fd( '{"result" : "success", "program" : "', task_ ,'"}' )
-END w_result
+--ROUTINE w_result
+--VAR
+--	write_lock :INTEGER
+--BEGIN
+	
+--	
+--	write_lock = 1
+--	CLEAR_SEMA (write_lock) -- makes sure semaphore is zero before using it.
+--	POST_SEMA (write_lock) -- makes motion_ctrl available immediately
+--END w_result
 
 ROUTINE is_tsk_done
 VAR
