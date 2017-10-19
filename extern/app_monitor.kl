@@ -4,114 +4,20 @@ PROGRAM appmonitor
 %NOPAUSE=ERROR+COMMAND+TPENABLE
 %NOBUSYLAMP
 
-CONST
-
-	R_XMAX = 43	
-	R_YMAX = 44
-	R_ZMAX = 45
-	R_XMIN = 46
-	R_YMIN = 47
-	R_ZMIN = 48
-
 VAR
 
 	STATUS: INTEGER
 	responseFile: FILE
-
-	xmax_flag: BOOLEAN
-	ymax_flag: BOOLEAN
-	zmax_flag: BOOLEAN
-	xmin_flag: BOOLEAN
-	ymin_flag: BOOLEAN
-	zmin_flag: BOOLEAN
-	
-	xmax_int: INTEGER
-	ymax_int: INTEGER
-	zmax_int: INTEGER
-	xmin_int: INTEGER
-	ymin_int: INTEGER
-	zmin_int: INTEGER
-	
-	xmax_real: REAL
-	ymax_real: REAL
-	zmax_real: REAL
-	xmin_real: REAL
-	ymin_real: REAL
-	zmin_real: REAL
 	
 	error_code: INTEGER
 	error_string: STRING[127]
-	cause_code: INTEGER
-	cause_string: STRING[127]
-	time_int: INTEGER
-	severity: INTEGER
-	prog_nam: STRING[127]
-
-	str_task IN DRAM FROM appstart: STRING[127]
-	task_att: INTEGER
-	task_dum: STRING[127]
-	running: INTEGER
-	appmotion: INTEGER
 
 	currentPos: XYZWPREXT
 	currentPosJ: JOINTPOS
 	valuePosJ: ARRAY[6] OF REAL
-	
-	reach_ab IN DRAM FROM appbcheck: INTEGER
-
-	limit_x IN DRAM FROM appcheck: INTEGER
-	limit_y IN DRAM FROM appcheck: INTEGER
-	limit_z IN DRAM FROM appcheck: INTEGER
-
 
 BEGIN
-
-	IF UNINIT( str_task ) THEN str_task = '@@@###@@@'; ENDIF
-
-	IF UNINIT( reach_ab ) THEN reach_ab = 0; ENDIF
-
-	IF UNINIT( limit_x ) THEN limit_x = 0; ENDIF
-	IF UNINIT( limit_y ) THEN limit_y = 0; ENDIF
-	IF UNINIT( limit_z ) THEN limit_z = 0; ENDIF
-
-	IF UNINIT( valuePosJ[1] ) THEN valuePosJ[1] = 100000; ENDIF
-	IF UNINIT( valuePosJ[2] ) THEN valuePosJ[2] = 100000; ENDIF
-	IF UNINIT( valuePosJ[3] ) THEN valuePosJ[3] = 100000; ENDIF
-	IF UNINIT( valuePosJ[4] ) THEN valuePosJ[4] = 100000; ENDIF
-	IF UNINIT( valuePosJ[5] ) THEN valuePosJ[5] = 100000; ENDIF
-	IF UNINIT( valuePosJ[6] ) THEN valuePosJ[6] = 100000; ENDIF
-
-	GET_REG(R_XMAX, xmax_flag, xmax_int, xmax_real, STATUS)
-	GET_REG(R_YMAX, ymax_flag, ymax_int, ymax_real, STATUS)
-	GET_REG(R_ZMAX, zmax_flag, zmax_int, zmax_real, STATUS)
-	GET_REG(R_XMIN, xmin_flag, xmin_int, xmin_real, STATUS)
-	GET_REG(R_YMIN, ymin_flag, ymin_int, ymin_real, STATUS)
-	GET_REG(R_ZMIN, zmin_flag, zmin_int, zmin_real, STATUS)
-
-	ERR_DATA(MAXINT, error_code, error_string, cause_code, cause_string, time_int, severity, prog_nam)
-
-	running = 0
-	appmotion = 0
-	
-	GET_TSK_INFO(str_task, 0, TSK_STATUS, task_att, task_dum, STATUS)
-	IF (STATUS <> 0 ) THEN
-		WRITE ('GET_TSK_INFO is failed, STATUS = ', STATUS, CR)
-	ELSE
-		IF ( task_att = PG_RUNNING ) THEN
-			running = 1
-		ELSE
-			running = 0
-		ENDIF
-	ENDIF
-
-	IF (str_task = 'APPMOTION') THEN
-		appmotion = 1
-	ELSE
-		appmotion = 0
-	ENDIF
-	
-	currentPos = CURPOS(0,0)
-	
+	currentPos = CURPOS(0,0)	
 	currentPosJ = CURJPOS(0,0)
 	
 	CNV_JPOS_REL( currentPosJ, valuePosJ, STATUS )

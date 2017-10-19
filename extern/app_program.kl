@@ -1,0 +1,40 @@
+PROGRAM appprogram
+%COMMENT = 'appprogram v1'
+%NOLOCKGROUP
+%NOPAUSE=ERROR+COMMAND+TPENABLE
+%NOBUSYLAMP
+
+VAR
+
+	STATUS: INTEGER
+	responseFile: FILE
+
+	proglist: ARRAY[100] OF STRING[16]
+	progc: INTEGER
+	progn: INTEGER
+
+BEGIN
+
+	FOR progc = 1 TO ARRAY_LEN(proglist) DO
+		IF UNINIT( proglist[progc] ) THEN  proglist[progc] = '######'; ENDIF
+	ENDFOR
+
+	PROG_LIST('*', 8, 0, 2, proglist, ARRAY_LEN(proglist), STATUS)
+	IF (STATUS <> 0 ) THEN
+		WRITE ('PROG_LIST built-IN failed WITH STATUS = ', STATUS, CR)
+	ENDIF
+
+	OPEN FILE responseFile ('RW', 'RD:RESPONSE.HTM')
+		
+		WRITE responseFile( '{', CR )
+			WRITE responseFile( '"progs": [' )
+				FOR progn = 1 TO ARRAY_LEN(proglist) - 1 DO
+					WRITE responseFile('"' ,proglist[progn],'"',',' )
+				ENDFOR				
+				WRITE responseFile( '"',proglist[ARRAY_LEN(proglist)],'"' )
+			WRITE responseFile( ' ] ', CR )
+		WRITE responseFile( '}')
+
+	CLOSE FILE responseFile
+
+END appprogram

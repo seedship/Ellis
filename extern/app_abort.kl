@@ -1,0 +1,27 @@
+PROGRAM appabort
+
+%COMMENT = 'appabort v1'
+%NOLOCKGROUP
+%NOBUSYLAMP
+
+VAR
+	rf_ :FILE
+	STATUS: INTEGER
+
+BEGIN
+		
+	OPEN FILE rf_ ('RW', 'RD:RESPONSE.HTM')
+	STATUS = IO_STATUS(rf_)
+	IF (STATUS <> 0) THEN
+		WRITE rf_ ( '{"result":"failed", "program":"appabort", "reason":',STATUS,'}') 
+	ENDIF
+	
+	ABORT_TASK('*ALL*', TRUE, TRUE, STATUS)
+	IF (STATUS <> 0 ) THEN
+		WRITE rf_ ( '{"result":"failed", "program":"appabort", "reason":',STATUS,'}')
+	ELSE
+		WRITE rf_ ( '{"result":"succes", "program":"appabort", "reason":',STATUS,'}')
+	ENDIF
+	
+	CLOSE FILE rf_
+END appabort
