@@ -1,0 +1,37 @@
+* Dictionary Form File: form.ftx
+*
+* Generate form.kl which should be included in your KAREL program
+.kl form
+.form
+$-,forml
+&home &reverse "Title here" &standard &new_line
+" label here " &new_line
+@3,10 "- Menu item 1 "
+@4,10 "- Menu item 2 "
+@5,10 "- Menu item 3 "
+@6,10 "- Menu item 4 line 1 +"
+@7,10 " Menu item 4 line 2 "
+@8,10 "- Menu item 5 "
+* Add as many items as you wish.
+* The form manager will scroll them.
+^form1_fkey * specifies element which contains
+* function key labels
+?form1_help * element which contains help
+.endform
+$-,form1_fkey * function key labels
+" F1" &new_line
+" F2" &new_line
+" F3" &new_line
+" F4" &new_line
+" HELP >" &new_line * help must be on F5
+" F6" &new_line
+" F7" &new_line
+" F8" &new_line
+" F9" &new_line
+" F10 >"
+* you can have a maximum of 10 function keys labeled
+$-, form1_help * help text
+"Help Line 1" &new_line
+"Help Line 2" &new_line
+"Help Line3" &new_line
+* You can have a maximum of 48 help lines

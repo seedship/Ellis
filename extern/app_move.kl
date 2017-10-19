@@ -1,0 +1,64 @@
+PROGRAM appmove
+
+%COMMENT = 'appmove v1'
+%NOLOCKGROUP
+%NOPAUSE=ERROR+COMMAND+TPENABLE
+%NOBUSYLAMP
+
+VAR
+
+	response :FILE
+	STATUS: INTEGER
+	
+	jmotion: STRING[1]
+	cmotion: STRING[1]
+	a_motion: STRING[1]
+	r_motion: STRING[1]
+
+	jm: INTEGER
+	cm: INTEGER
+	absolut: INTEGER
+	relativ: INTEGER
+
+	new_xyz : XYZWPR -- XYZWPR which has offset applied
+	org_xyz : XYZWPR
+	open_id : INTEGER -- Identifier for the opened to_prog
+	RET : INTEGER
+	prog_index: INTEGER
+BEGIN
+	
+	OPEN_TPE (s_task, TPE_RWACC, TPE_NOREJ, open_id, STATUS)
+	IF (STATUS <> 0) THEN
+		RET = STATUS
+	ENDIF
+	
+	IF (RET = 0) THEN
+		org_xyz = GET_POS_TPE (open_id , 1, STATUS)
+		IF (STATUS <> 0) THEN
+			RET = STATUS
+		ENDIF
+	ENDIF
+	
+	IF (RET = 0) THEN
+		new_xyz.x = org_xyz.x + x
+		new_xyz.y = org_xyz.y + y
+		new_xyz.z = org_xyz.z + z
+		new_xyz.w = org_xyz.w + w
+		new_xyz.p = org_xyz.p + p
+		new_xyz.r = org_xyz.r + r
+	ENDIF
+	
+	IF (RET = 0) THEN
+		SET_POS_TPE (open_id, 1, new_xyz, STATUS)
+		IF (STATUS <> 0) THEN
+			RET = STATUS
+		ENDIF	
+	ENDIF
+	
+	IF (RET = 0) THEN
+		CLOSE_TPE (open_id, STATUS)
+		IF (STATUS <> 0) THEN
+			RET = STATUS
+		ENDIF
+	ENDIF
+END appmove
