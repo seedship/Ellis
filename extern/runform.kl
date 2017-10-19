@@ -1,0 +1,33 @@
+PROGRAM runform
+%NOLOCKGROUP
+
+%INCLUDE form -- allows you to access form element numbers
+%INCLUDE klevccdf
+%INCLUDE klevkeys
+%INCLUDE klevkmsk
+
+VAR
+	device_stat: INTEGER --tp_panel or crt_panel
+	value_array: ARRAY [1] OF STRING [1] --dummy variable for DISCTRL_FORM
+	inact_array: ARRAY [1] OF BOOLEAN --not used
+	change_array: ARRAY [1] OF BOOLEAN --not used
+	def_item: INTEGER
+	term_char: INTEGER
+	STATUS: INTEGER
+BEGIN
+	device_stat = TP_PANEL
+	FORCE_SPMENU (device_stat, SPI_TPUSER2, 1)--forces the TP USER2 menu
+	def_item = 1 -- start with menu item 1
+	
+	--Displays form named FORM1
+	DISCTRL_FORM ('FORM', form1, value_array, inact_array,
+	change_array, kc_func_key, def_item, term_char, STATUS)
+
+	WRITE TPERROR (CHR(cc_clear_win)) --clear the TP error window
+	
+	IF term_char = KY_SELECT THEN
+		WRITE TPERROR ('Menu item', def_item, 'was selected.')
+	ELSE
+		WRITE TPERROR ('Func key', term_char, ' was selected.')
+	ENDIF
+END runform
