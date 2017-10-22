@@ -15,11 +15,11 @@ Set UNLOCK to HTTP authentication of KAREL:
 Set the teach pendent of and turn the robot to automatic mode.
 
 ## Example usage
-http://<robot ip>/KAREL/appprogram
-http://<robot ip>/KAREL/appmonitor
+`http://<robot ip>/KAREL/appprogram`
+`http://<robot ip>/KAREL/appmonitor`
 
-http://<robot ip>/KAREL/appstart?task=motion
-http://<robot ip>/KAREL/appmove?motion_t=jja&coord1=0.0&coord2=0.0&coord3=0.0&coord4=45.0&coord5=0.0&coord6=0.0
+`http://<robot ip>/KAREL/appstart?task=motion`
+`http://<robot ip>/KAREL/appmove?motion_t=jja&coord1=0.0&coord2=0.0&coord3=0.0&coord4=45.0&coord5=0.0&coord6=0.0`
 
 ## program
 
