@@ -1,4 +1,4 @@
-# ELLIS - A SMALL interfaceing tool with the robot controller
+# ELLIS - A SMALL interfaceing tool for a fanuc the robot controller
 
 ## Installation
 Build the `*.kl` files in the `karel` folder with Roboguide and copy them to the robot `MD:` folder
