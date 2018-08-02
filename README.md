@@ -1,5 +1,4 @@
-# MOVE CGI - A SMALL interfaceing tool with the robot controller 
-
+# ELLIS - A SMALL interfaceing tool with the robot controller
 
 ## Installation
 Build the `*.kl` files in the `karel` folder with Roboguide and copy them to the robot `MD:` folder
@@ -40,6 +39,5 @@ app move uses the `Motion.tp` program the motion types are
 6. lca => absolut cartesian motion with linear interpolation
  
 followed by the six coordinates.
-=======
-# Ellis
+
 
