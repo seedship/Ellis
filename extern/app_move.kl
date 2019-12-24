@@ -170,7 +170,11 @@ BEGIN
 		
 		ELSE:	
 			WRITE rf_ ( '{"result":"failed", "program":"appmove", "reason":',opt,'}') 
-	ENDSELECT	
+	ENDSELECT
+	
+	REPEAT
+		DELAY(50)
+	UNTIL(NOT FLG[7])
 
 	CLOSE FILE rf_
 	
