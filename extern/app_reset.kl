@@ -1,0 +1,11 @@
+PROGRAM appreset
+
+%NOLOCKGROUP
+
+VAR
+	success : BOOLEAN
+
+BEGIN
+	RESET(success)
+END appreset
+
