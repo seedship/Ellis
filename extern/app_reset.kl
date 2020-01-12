@@ -4,8 +4,19 @@ PROGRAM appreset
 
 VAR
 	success : BOOLEAN
+	
+	response : FILE
+	status: INTEGER
 
 BEGIN
 	RESET(success)
+	OPEN FILE response('RW', 'RD:RESPONSE.HTM')
+	status = IO_STATUS(response)
+	IF (STATUS <> 0) THEN
+		WRITE response('{"result":"failed", "program":"appreset", "reason":',STATUS,'}')
+	ELSE
+		WRITE response('{"result":"success", "program":"appreset", "reason":',STATUS,'}')
+	ENDIF
+	CLOSE FILE response
 END appreset
 
