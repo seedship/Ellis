@@ -7,7 +7,7 @@ PROGRAM appstart
 VAR
 
 	--debug_logPs: FILE
-	response :FILE
+	response: FILE
 
 	STATUS: INTEGER
 
@@ -37,7 +37,7 @@ END appstart
 
 ROUTINE moveto
 VAR
-	tsk_done :BOOLEAN
+	tsk_done: BOOLEAN
 	motion_ctrl: INTEGER
 BEGIN
 	
