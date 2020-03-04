@@ -11,6 +11,8 @@ VAR
 	
 	motion_ctrl: INTEGER
 BEGIN
+	$GROUP[1].$UTOOL = $MNUTOOL[1,1] --uTool 1
+	$GROUP[1].$UFRAME = $MNUFRAME[1,1] --uFrame 1
 	OPEN FILE response ('RW', 'RD:RESPONSE.HTM')	
 	STATUS = IO_STATUS(response)
 	IF (STATUS <> 0) THEN
